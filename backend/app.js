@@ -5,6 +5,7 @@ import short_url from "./src/routes/shorturl.route.js";
 import urlSchema from "./src/model/shorturl.model.js";
 import connectDB from "./src/config/mango.config.js";
 import { connect } from "mongoose";
+import { redirectShortUrl } from "./src/controller/shorturl.controller.js";
 dotenv.config("./.env");
 
 const app = express();
@@ -20,25 +21,10 @@ app.get("/api/create", (req, res) => {
 // app.post("/api/create", short_url);
 app.use("/api/create", short_url);
 
-// Add a route to redirect short URLs
-app.get("/:shortUrl", async (req, res) => {
-    try {
-        const shortUrl = await urlSchema.findOne({ short_url: req.params.shortUrl });
-        
-        if (!shortUrl) {
-            return res.status(404).json({ error: "URL not found" });
-        }
-        
-        // Increment clicks
-        shortUrl.clicks += 1;
-        await shortUrl.save();
-        
-        res.redirect(shortUrl.full_url);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Server error" });
-    }
-});
+// Add a route to redirect short URLs and update the click count 
+app.get("/:shortUrl", redirectShortUrl);
+
+// app.use(ErrorHandler);
 
 app.listen(3000, () => {
     connectDB();
