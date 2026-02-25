@@ -1,6 +1,7 @@
 import express from "express";
 import {nanoid} from "nanoid"
 import dotenv from "dotenv"
+import cors from "cors";
 import short_url from "./src/routes/shorturl.route.js";
 import urlSchema from "./src/model/shorturl.model.js";
 import connectDB from "./src/config/mango.config.js";
@@ -9,6 +10,8 @@ import { redirectShortUrl } from "./src/controller/shorturl.controller.js";
 dotenv.config("./.env");
 
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
